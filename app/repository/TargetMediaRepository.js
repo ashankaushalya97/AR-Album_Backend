@@ -9,7 +9,7 @@ function TargetMediaRepository() {
         isAutoIncrement: true,
         isFinal: false
     }, {
-        name: 'taget_img',
+        name: 'target_img',
         type: 'varbinary(max)',
         notNull: true,
         isPrimary: false,
@@ -21,7 +21,7 @@ function TargetMediaRepository() {
         isPrimary: false,
         isFinal: false
     }, {
-        name: 'albem_id',
+        name: 'album_id',
         type: 'int',
         notNull: true,
         isPrimary: false,
