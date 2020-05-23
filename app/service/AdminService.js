@@ -20,6 +20,7 @@ AdminService.prototype.loginAdmin = function (userData) {
         value: userData.password,
         isStringData: true
     }];
+    
     var result = this.adminRepository.findBy('admin',connection, cols);
     console.log("RESULT :::::::::::::::::::::::::::::: ",result);
     if (result !== null) {

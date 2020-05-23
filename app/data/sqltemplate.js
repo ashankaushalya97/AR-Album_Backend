@@ -65,8 +65,7 @@ SqlRepository.prototype.findAll = function (tableName,conn) {
     return result;
 };
 
-SqlRepository.prototype.findBy =function(tableName,conn, cols) {
-    var result = null
+SqlRepository.prototype.findBy = function(tableName,conn, cols) {
     var queryString = 'SELECT * FROM ' + tableName;
 
     if (cols !== null) {
@@ -78,16 +77,19 @@ SqlRepository.prototype.findBy =function(tableName,conn, cols) {
 
         });
     }
-    conn.query(queryString,function(error, rows) {
-        if (error) {
-            throw error;
-        }
-        result = rows;
-        console.log("RESULT ROWS ::::::::::::::::::::: ",result);
-    });
-    console.log("RESULT ROWS ::::::::::::::::::::: ",result);
+    console.log("QUERY STRING ::::::::::::: ",queryString);
 
-    return result;
+    return new Promise(() => {
+        conn.query(queryString,function(rows,error) {
+            if (error) {
+                throw error;
+            }
+            // result = rows;
+            console.log("RESULT ROWS 1 ::::::::::::::::::::: ",rows);
+            return rows;
+        })
+    });
+    // console.log("RESULT ROWS 2 ::::::::::::::::::::: ",result);
 };
 
 SqlRepository.prototype.insert = function(tableName,conn,  cols) {
