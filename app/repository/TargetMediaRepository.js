@@ -14,7 +14,7 @@ function TargetMediaRepository() {
         notNull: true,
         isPrimary: false,
         isFinal: false
-    }, {
+    }, {    
         name: 'source_media',
         type: 'varbinary(max)',
         notNull: true,

@@ -3,12 +3,11 @@ var {AdminRepository} = require("../repository/AdminRepository");
 
 var AdminService = function () {
     this.adminRepository = new AdminRepository();
-    console.log(this.adminRepository);
+    // console.log(this.adminRepository);
 };
 
 AdminService.prototype.loginAdmin = function (userData) {
     var connection = mysqlConn.pool();
-
     var cols = [{
         name: 'username',
         condition: '=',
@@ -21,10 +20,10 @@ AdminService.prototype.loginAdmin = function (userData) {
         value: userData.password,
         isStringData: true
     }];
-    var result = this.userRepository.findBy('admin',connection, cols);
-
+    var result = this.adminRepository.findBy('admin',connection, cols);
+    console.log("RESULT :::::::::::::::::::::::::::::: ",result);
     if (result !== null) {
-
+            
         result.password = null;
         if (result.status === 1) {
             return result;
@@ -59,7 +58,7 @@ AdminService.prototype.registerUser = function (userData)  {
     }];
     console.log(this);
 
-    var result = this.userRepository.insert('admin',connection, cols);
+    var result = this.adminRepository.insert('admin',connection, cols);
 
     if (result !== null) {
 
