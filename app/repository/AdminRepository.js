@@ -25,10 +25,10 @@ function AdminRepository() {
         type: 'VARCHAR(255)',
         notNull: true,
         isPrimary: false,
-        isFinal: false
+        isFinal: true
     }];
 
-    SqlRepository.call('','admin', this.cols, []);
+    SqlRepository.call('','testingHi', this.cols, []);
 };
 
 AdminRepository.prototype = Object.create(SqlRepository.prototype);

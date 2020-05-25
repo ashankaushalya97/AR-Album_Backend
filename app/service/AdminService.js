@@ -7,127 +7,138 @@ var AdminService = function () {
 };
 
 AdminService.prototype.loginAdmin = function (userData) {
-    var connection = mysqlConn.pool();
-    var cols = [{
-        name: 'username',
-        condition: '=',
-        value: userData.username,
-        isStringData: true,
-        nextCond: 'AND'
-    }, {
-        name: 'password',
-        condition: '=',
-        value: userData.password,
-        isStringData: true
-    }];
-    var result = this.adminRepository.findBy('admin',connection, cols);
-    console.log("RESULT :::::::::::::::::::::::::::::: ",result);
-    if (result !== null) {
-            
-        result.password = null;
-        if (result.status === 1) {
-            return result;
-        } else {
-            return {
-                code: '40001' // code for user have no access to the system
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
+        var cols = [{
+            name: 'username',
+            condition: '=',
+            value: userData.username,
+            isStringData: true,
+            nextCond: 'AND'
+        }, {
+            name: 'password',
+            condition: '=',
+            value: userData.password,
+            isStringData: true
+        }];
+        this.adminRepository.findBy('testingHi', connection, cols).then(result => {
+            console.log("RESULT :::::::::::::::::::::::::::::: ", result);
+            if (result !== null) {
+                if (result) {
+                    resolve({
+                        username: result[0].username,
+                        email: result[0].email,
+                        id: result[0].id
+                    });
+                } else {
+                    resolve({
+                        code: '40001' // code for user have no access to the system
+                    })
+                }
+            } else {
+
+                resolve( {
+                    code: '40002' // code for username or password invalid
+                })
             }
-        }
-    } else {
-
-        return {
-            code: '40002' // code for username or password invalid
-        }
-    }
+        });
+    })
 };
 
-AdminService.prototype.registerUser = function (userData)  {
-    var connection = mysqlConn.pool();
+AdminService.prototype.registerUser = function (userData) {
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var cols = [{
-        name: 'username',
-        value: userData.username,
-        isStringData: true
-    }, {
-        name: 'email',
-        value: userData.email,
-        isStringData: true
-    },{
-        name: 'password',
-        value: userData.password,
-        isStringData: true
-    }];
-    console.log(this);
+        var cols = [{
+            name: 'username',
+            value: userData.username,
+            isStringData: true
+        }, {
+            name: 'email',
+            value: userData.email,
+            isStringData: true
+        }, {
+            name: 'password',
+            value: userData.password,
+            isStringData: true
+        }];
+        console.log(this);
 
-    var result = this.adminRepository.insert('admin',connection, cols);
+        this.adminRepository.insert('admin', connection, cols).then(result => {
+            if (result !== null) {
 
-    if (result !== null) {
+                if (result.password) {
+                    result.password = null;
+                }
+                resolve(result);
+            } else {
 
-        if (result.password) {
-            result.password = null;
-        }
-        return result;
-    } else {
-
-        return {
-            code: 40003     // code for error with user registration
-        }
-    }
+                resolve ({
+                    code: 40003     // code for error with user registration
+                })
+            }
+        });
+    })
 
 };
 
-AdminService.prototype.updateUser = function (userData,userId) {
-    var connection = mysqlConn.pool();
+AdminService.prototype.updateUser = function (userData, userId) {
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var cols = [{
-        name: 'username',
-        value: userData.username,
-        isStringData: true
-    }, {
-        name: 'email',
-        value: userData.email,
-        isStringData: true
-    },{
-        name: 'password',
-        value: userData.password,
-        isStringData: true
-    }];
+        var cols = [{
+            name: 'username',
+            value: userData.username,
+            isStringData: true
+        }, {
+            name: 'email',
+            value: userData.email,
+            isStringData: true
+        }, {
+            name: 'password',
+            value: userData.password,
+            isStringData: true
+        }];
 
-    var updateConds = [{
-        name: 'id',
-        value: userId,
-        isStringData: false,
-        condition: '='
-    }];
+        var updateConds = [{
+            name: 'id',
+            value: userId,
+            isStringData: false,
+            condition: '='
+        }];
 
-    var updateResult = this.userRepository.update('admin',connection, cols, updateConds);
-
-    if (updateResult === null) {
-        return updateResult;
-    } else {
-        return {
-            code: 40005     //  code for user update fail
-        }
-    }
+        this.userRepository.update('admin', connection, cols, updateConds).then(updateResult => {
+            if (updateResult === null) {
+                resolve (updateResult);
+            } else {
+                resolve ({
+                    code: 40005     //  code for user update fail
+                })
+            }
+        });
+    })
 };
 AdminService.prototype.deleteUser = function (userId) {
-    var connection = mysqlConn.pool();
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var updateConds = [{
-        name: 'id',
-        value: userId,
-        isStringData: false,
-        condition: '='
-    }];
+        var updateConds = [{
+            name: 'id',
+            value: userId,
+            isStringData: false,
+            condition: '='
+        }];
 
-    var updateResult = this.userRepository.delete('admin',connection, updateConds);
-
-    if (updateResult === null) {
-        return updateResult;
-    } else {
-        return {
-            code: 40005     //  code for user update fail
-        }
-    }
+        this.userRepository.delete('admin', connection, updateConds).then(updateResult => {
+            if (updateResult === null) {
+                resolve(updateResult);
+            } else {
+                resolve({
+                    code: 40005     //  code for user update fail
+                })
+            }
+        });
+    })
 };
 
 exports.AdminService = AdminService;

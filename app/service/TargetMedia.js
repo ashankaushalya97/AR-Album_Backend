@@ -7,17 +7,19 @@ var TargetMedia = function () {
 };
 
 TargetMedia.prototype.findByAlbumId = function (albumId) {
-    var connection = mysqlConn.pool();
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var cols = [{
-        name: 'album_id',
-        value: albumId,
-        isStringData: false
-    }];
+        var cols = [{
+            name: 'album_id',
+            value: albumId,
+            isStringData: false
+        }];
 
-    var result = this._targetMediaRepository.findBy("media", connection, cols);
-
-    return result;
+        this._targetMediaRepository.findBy("media", connection, cols).then(result => {
+            resolve(result);
+        });
+    })
 };
 
 exports.TargetMedia = TargetMedia;

@@ -8,8 +8,10 @@ router.get('', (req, res) => {
     var _tm = new TargetMedia();
     var albumId = req.query.albumId;
 
-    var resp = _tm.findByAlbumId(albumId);
-    res.send(resp);
+    _tm.findByAlbumId(albumId).then(resp => {
+        res.send(resp);
+    });
+
 });
 
 module.exports = router;

@@ -6,92 +6,102 @@ var AlbumService = function () {
     console.log(this.albumRepository);
 };
 
-AlbumService.prototype.registerAlbum = function (userData)  {
-    var connection = mysqlConn.pool();
+AlbumService.prototype.registerAlbum = function (userData) {
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var cols = [{
-        name: 'album_name',
-        value: userData.username,
-        isStringData: true
-    }];
-    console.log(this);
+        var cols = [{
+            name: 'album_name',
+            value: userData.username,
+            isStringData: true
+        }];
+        console.log(this);
 
-    var result = this.userRepository.insert('album',connection, cols);
+        this.userRepository.insert('album', connection, cols).then(result => {
+            if (result !== null) {
 
-    if (result !== null) {
+                if (result.password) {
+                    result.password = null;
+                }
+                resolve(result);
+            } else {
 
-        if (result.password) {
-            result.password = null;
-        }
-        return result;
-    } else {
+                resolve({
+                    code: 40003     // code for error with user registration
+                })
+            }
+        });
 
-        return {
-            code: 40003     // code for error with user registration
-        }
-    }
+    })
 
 };
 
 AlbumService.prototype.getAllAlbums = function () {
-    var connection = mysqlConn.pool();
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var result = this.userRepository.findAll('album',connection);
-    if (result === null) {
-        return {
-            code: 40004     // code to user not found
-        }
-    }else{
-        return result;
-    }
-
+        this.userRepository.findAll('album', connection).then(result => {
+            if (result === null) {
+                resolve({
+                    code: 40004     // code to user not found
+                })
+            } else {
+                resolve(result);
+            }
+        });
+    })
 };
 
-AlbumService.prototype.updateAlbum = function (userData,userId) {
-    var connection = mysqlConn.pool();
+AlbumService.prototype.updateAlbum = function (userData, userId) {
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var cols = [{
-        name: 'album_name',
-        value: userData.username,
-        isStringData: true
-    }];
+        var cols = [{
+            name: 'album_name',
+            value: userData.username,
+            isStringData: true
+        }];
 
-    var updateConds = [{
-        name: 'id',
-        value: userId,
-        isStringData: false,
-        condition: '='
-    }];
+        var updateConds = [{
+            name: 'id',
+            value: userId,
+            isStringData: false,
+            condition: '='
+        }];
 
-    var updateResult = this.userRepository.update('album',connection, cols, updateConds);
-
-    if (updateResult === null) {
-        return updateResult;
-    } else {
-        return {
-            code: 40005     //  code for user update fail
-        }
-    }
+        this.userRepository.update('album', connection, cols, updateConds).then(updateResult => {
+            if (updateResult === null) {
+                resolve(updateResult);
+            } else {
+                resolve({
+                    code: 40005     //  code for user update fail
+                })
+            }
+        });
+    })
 };
 AlbumService.prototype.deleteAlbum = function (albumId) {
-    var connection = mysqlConn.pool();
+    return new Promise((resolve, reject) => {
+        var connection = mysqlConn.pool();
 
-    var updateConds = [{
-        name: 'id',
-        value: albumId,
-        isStringData: false,
-        condition: '='
-    }];
+        var updateConds = [{
+            name: 'id',
+            value: albumId,
+            isStringData: false,
+            condition: '='
+        }];
 
-    var updateResult = this.userRepository.delete('album',connection, updateConds);
+        this.userRepository.delete('album', connection, updateConds).then(updateResult => {
+            if (updateResult === null) {
+                return updateResult;
+            } else {
+                return {
+                    code: 40005     //  code for user update fail
+                }
+            }
+        });
 
-    if (updateResult === null) {
-        return updateResult;
-    } else {
-        return {
-            code: 40005     //  code for user update fail
-        }
-    }
+    })
 };
 
 exports.AlbumService = AlbumService;
