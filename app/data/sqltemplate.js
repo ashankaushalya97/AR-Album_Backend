@@ -77,7 +77,6 @@ SqlRepository.prototype.findAll = function (tableName,conn) {
 SqlRepository.prototype.findBy =function(tableName,conn, cols) {
 
     return new Promise((resolve, reject) => {
-        var result = null
         var queryString = 'SELECT * FROM ' + tableName;
 
         if (cols !== null) {
